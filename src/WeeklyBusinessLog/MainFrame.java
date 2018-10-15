@@ -4,20 +4,45 @@
  * and open the template in the editor.
  */
 package WeeklyBusinessLog;
-
+import java.sql.*;
 /**
  *
  * @author Sady
  */
 public class MainFrame extends javax.swing.JFrame {
 
+    private Customer selectedCustomer;
+    private static String username, password;
+    private static Connection connection = null;
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
     }
-
+    
+    private static void connectToDatabase() {
+        try (Connection conn = DriverManager.getConnection(DatabaseCredentials.databaseUrl, username, password)) {
+            connection = conn;
+            populateCustomerList(conn);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+    
+    private static void populateCustomerList(Connection connection) {
+        try {
+            String query = "SELECT * FROM Customers";
+            Statement statement = connection.createStatement();
+            ResultSet results = statement.executeQuery(query);
+            System.out.println("Results: " + results);
+            
+        } catch (SQLException e) {
+            
+        }
+        
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -50,6 +75,7 @@ public class MainFrame extends javax.swing.JFrame {
                 "First Name", "Last Name", "Address", "Incoming Date"
             }
         ));
+        jTable1.setShowGrid(false);
         jScrollPane1.setViewportView(jTable1);
 
         addNewButton.setText("Add New");
@@ -64,6 +90,11 @@ public class MainFrame extends javax.swing.JFrame {
         refreshButton.setText("Refresh");
 
         editButton.setText("Edit");
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
 
         exitButton.setText("Exit");
         exitButton.addActionListener(new java.awt.event.ActionListener() {
@@ -118,15 +149,13 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton1)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addNewButton)
                     .addComponent(exitButton)
@@ -148,6 +177,10 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         CustomerEditor.main(null);
     }//GEN-LAST:event_addNewButtonActionPerformed
+
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_editButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -182,6 +215,11 @@ public class MainFrame extends javax.swing.JFrame {
                 new MainFrame().setVisible(true);
             }
         });
+        
+        //Set Credentials on Load
+        username = args[0];
+        password = args[1];
+        connectToDatabase();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

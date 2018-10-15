@@ -16,7 +16,7 @@ public class WeeklyBusinessLog {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        MainFrame.main(null);
+        LoginDialog.main(null);
     }
     
 }
