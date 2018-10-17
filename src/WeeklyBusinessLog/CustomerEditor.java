@@ -78,7 +78,7 @@ public class CustomerEditor extends javax.swing.JDialog {
             String sourceDetail = detailComboBox.getSelectedItem().toString();
             String addons = String.join(",", result);
             
-            Customer cst = new Customer(0, firstName, lastName);
+            //Customer cst = new Customer(0, firstName, lastName);
         }
 
     }
@@ -163,6 +163,7 @@ public class CustomerEditor extends javax.swing.JDialog {
         specificsTextArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         jLabel3.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

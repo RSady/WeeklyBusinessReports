@@ -31,6 +31,7 @@ public class LoginDialog extends javax.swing.JDialog {
             MainFrame.main(credentials);
         } catch (SQLException e) {
             System.out.println("Cannot connect to database:" + e);
+            JOptionPane.showMessageDialog(null, "Unable to connect to the database. \n" + e);
         }
         
     }
