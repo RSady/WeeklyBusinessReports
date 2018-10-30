@@ -5,6 +5,9 @@
  */
 package WeeklyBusinessLog;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -24,6 +27,14 @@ public class InstallAddOnsDialog extends javax.swing.JDialog {
     public InstallAddOnsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        centerWindow(this);
+    }
+    
+    public static void centerWindow(Window frame) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+        frame.setLocation(x, y);
     }
 
     public ArrayList<String> getAddOns() {

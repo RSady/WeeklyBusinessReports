@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package WeeklyBusinessLog;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.sql.*;
 /**
  *
@@ -19,6 +22,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
+        centerWindow(this);
     }
     
     private static void connectToDatabase() {
@@ -28,6 +32,13 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (SQLException e) {
             System.out.println(e);
         }
+    }
+    
+    public static void centerWindow(Window frame) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+        frame.setLocation(x, y);
     }
     
     private static void populateCustomerList(Connection connection) {

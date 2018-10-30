@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package WeeklyBusinessLog;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.sql.*;
 import javax.swing.JOptionPane;
 /**
@@ -21,6 +24,7 @@ public class LoginDialog extends javax.swing.JDialog {
     public LoginDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        centerWindow(this);
     }
 
     private void logIntoDatabase(String user, String password) {
@@ -116,6 +120,12 @@ public class LoginDialog extends javax.swing.JDialog {
         
     }//GEN-LAST:event_signInButtonActionPerformed
 
+    public static void centerWindow(Window frame) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+        frame.setLocation(x, y);
+    }
     /**
      * @param args the command line arguments
      */
@@ -145,6 +155,7 @@ public class LoginDialog extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 LoginDialog dialog = new LoginDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
