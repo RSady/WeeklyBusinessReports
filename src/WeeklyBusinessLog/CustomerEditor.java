@@ -31,6 +31,8 @@ public class CustomerEditor extends javax.swing.JDialog {
     
     /**
      * Creates new form CustomerEditor
+     * @param parent
+     * @param modal
      */
     public CustomerEditor(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -620,7 +622,7 @@ public class CustomerEditor extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(jLabel3)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -638,7 +640,7 @@ public class CustomerEditor extends javax.swing.JDialog {
                     .addComponent(saveButton)
                     .addComponent(cancelButton)
                     .addComponent(historyButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18))
         );
 
         pack();
