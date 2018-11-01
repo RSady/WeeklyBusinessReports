@@ -4,10 +4,21 @@
  * and open the template in the editor.
  */
 package WeeklyBusinessLog;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JTable;
+import javax.swing.table.*;
+import javax.swing.text.MaskFormatter;
+
 /**
  *
  * @author Sady
@@ -17,15 +28,26 @@ public class MainFrame extends javax.swing.JFrame {
     private Customer selectedCustomer;
     private static String username, password;
     private static Connection connection = null;
+    private static ArrayList<Customer> customerList = new ArrayList();
+    private static String[] columnHeaders = {"Name", "Address", "Phone", "Income Date", "Account Type"};
+    private static DefaultTableModel tableModel = new DefaultTableModel(columnHeaders, 0){
+        //Disables cell editing by user
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
         centerWindow(this);
+        
+        connectToDatabase();
     }
     
-    private static void connectToDatabase() {
+    private void connectToDatabase() {
         try (Connection conn = DriverManager.getConnection(DatabaseCredentials.databaseUrl, username, password)) {
             connection = conn;
             populateCustomerList(conn);
@@ -41,17 +63,102 @@ public class MainFrame extends javax.swing.JFrame {
         frame.setLocation(x, y);
     }
     
-    private static void populateCustomerList(Connection connection) {
+    private void populateCustomerList(Connection connection) {
         try {
             String query = "SELECT * FROM Customers";
             Statement statement = connection.createStatement();
             ResultSet results = statement.executeQuery(query);
-            System.out.println("Results: " + results);
             
+            while (results.next()) {
+                Address address = new Address(results.getString("street"), 
+                                              results.getString("unit"), 
+                                              results.getString("city"), 
+                                              results.getString("state"), 
+                                              results.getString("zip"));
+                Customer customer = new Customer();
+                customer.setId(results.getInt("id"));
+                customer.setFirstName(results.getString("first_name"));
+                customer.setLastName(results.getString("last_name"));
+                customer.setBusinessName(results.getString("business_name"));
+                customer.setAddress(address);
+                customer.setPhoneNumber(results.getString("phone"));
+                customer.setEmail(results.getString("email"));
+                customer.setAccountType(results.getString("account_type"));
+                customer.setSourceDetails(results.getString("source_details"));
+                customer.setSourceSpecifics(results.getString("source_specifics"));
+                customer.setSourceType(results.getString("source_type"));
+                customer.setIntalledSvc(results.getString("installed_service"));
+                customer.setSurveyDate(results.getInt("survey_date"));
+                customer.setInstallDate(results.getInt("install_date"));
+                customer.setHistory(results.getInt("history"));
+                customer.setAddOns(results.getString("add_ons"));
+                
+                System.out.println(customer.toString());
+                customerList.add(customer);
+            }
+            
+            //Populate JTable with data
+        tableModel.setRowCount(0);
+         for (int i = 0; i < customerList.size(); i++) {
+             String name = customerList.get(i).getFirstName() + " " + customerList.get(i).getLastName();
+             String street = customerList.get(i).getAddress().getStreet();
+             String unit = customerList.get(i).getAddress().getUnit();
+             String city = customerList.get(i).getAddress().getCity();
+             String state = customerList.get(i).getAddress().getState();
+             String zip = customerList.get(i).getAddress().getZip();
+             String address;
+             if (unit == null) {
+                 address = street + ", " + city + " " + state + ", " + zip;
+             } else {
+                 address = street + " " + unit + ", " + city + " " + state + ", " + zip;
+             }
+             
+             String phone = customerList.get(i).getPhoneNumber();
+             String phoneMask = "(###) ###-####";
+             MaskFormatter maskFormatter = new MaskFormatter(phoneMask);
+             maskFormatter.setValueContainsLiteralCharacters(false);
+             Date incomeDate = new Date(customerList.get(i).getIncomeDate());
+             String accountType = customerList.get(i).getAccountType();
+             Object[] data = {name, address, maskFormatter.valueToString(phone), formatDate(incomeDate), accountType};
+             tableModel.addRow(data);
+             //tableView.setRowSelectionInterval(selectedIndex, selectedIndex);
+         }
+         //resizeColumnWidth(jTable);
+         
+         jTable.setModel(tableModel); 
         } catch (SQLException e) {
-            
+            System.out.println("Populate Customers Error: " + e);
+        } catch (ParseException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                System.out.println(ex);
+            } 
         }
         
+    }
+    
+    public void resizeColumnWidth(JTable table) {
+    final TableColumnModel columnModel = table.getColumnModel();
+    for (int column = 0; column < table.getColumnCount(); column++) {
+        int width = 15; // Min width
+        for (int row = 0; row < table.getRowCount(); row++) {
+            TableCellRenderer renderer = table.getCellRenderer(row, column);
+            Component comp = table.prepareRenderer(renderer, row, column);
+            width = Math.max(comp.getPreferredSize().width +1 , width);
+        }
+        if(width > 300)
+            width=300;
+        columnModel.getColumn(column).setPreferredWidth(width);
+    }
+}
+    
+    private String formatDate(Date date) {
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.US);
+        String dateStr = dateFormat.format(date);
+        return dateStr;
     }
     
     /**
@@ -64,7 +171,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTable = new javax.swing.JTable();
         addNewButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
@@ -79,7 +186,7 @@ public class MainFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -87,7 +194,7 @@ public class MainFrame extends javax.swing.JFrame {
                 "First Name", "Last Name", "Address", "Incoming Date"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(jTable);
 
         addNewButton.setText("Add New");
         addNewButton.addActionListener(new java.awt.event.ActionListener() {
@@ -230,7 +337,7 @@ public class MainFrame extends javax.swing.JFrame {
         //Set Credentials on Load
         username = args[0];
         password = args[1];
-        connectToDatabase();
+        //connectToDatabase();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -241,7 +348,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JButton refreshButton;
