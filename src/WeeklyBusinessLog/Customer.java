@@ -14,39 +14,35 @@ import java.util.ArrayList;
 public class Customer {
     
     int id;
-    int incomeDate, surveyDate, installDate;
-    String source;
-    String firstName, lastName;
+    String firstName, lastName, businessName;
     Address address;
-    String phoneNumber, email, sourceDetails, specifics, sourceType, status, installedSvc, businessName;
-    ArrayList<String> addons;
-    History history;
+    String phoneNumber, email;
+    String accountType, sourceDetails, sourceSpecifics, sourceType;
+    String intalledSvc;
+    int surveyDate, intallDate, history;
+    String addOns;
 
     public Customer() {
     }
 
-    public Customer(int id, int incomeDate, int surveyDate, int installDate, String source, String firstName, String lastName, Address address, String phoneNumber, String email, String sourceDetails, String specifics, String sourceType, String status, String installedSvc, String businessName, ArrayList<String> addons, History history) {
+    public Customer(int id, String firstName, String lastName, String businessName, Address address, String phoneNumber, String email, String accountType, String sourceDetails, String sourceSpecifics, String sourceType, String intalledSvc, int surveyDate, int intallDate, int history, String addOns) {
         this.id = id;
-        this.incomeDate = incomeDate;
-        this.surveyDate = surveyDate;
-        this.installDate = installDate;
-        this.source = source;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.businessName = businessName;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.accountType = accountType;
         this.sourceDetails = sourceDetails;
-        this.specifics = specifics;
+        this.sourceSpecifics = sourceSpecifics;
         this.sourceType = sourceType;
-        this.status = status;
-        this.installedSvc = installedSvc;
-        this.businessName = businessName;
-        this.addons = addons;
+        this.intalledSvc = intalledSvc;
+        this.surveyDate = surveyDate;
+        this.intallDate = intallDate;
         this.history = history;
+        this.addOns = addOns;
     }
-
-    
 
     public int getId() {
         return id;
@@ -54,64 +50,6 @@ public class Customer {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getIncomeDate() {
-        return incomeDate;
-    }
-
-    public void setIncomeDate(int incomeDate) {
-        this.incomeDate = incomeDate;
-    }
-
-    public int getSurveyDate() {
-        return surveyDate;
-    }
-
-    public void setSurveyDate(int surveyDate) {
-        this.surveyDate = surveyDate;
-    }
-
-    public int getInstallDate() {
-        return installDate;
-    }
-
-    public void setInstallDate(int installDate) {
-        this.installDate = installDate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getInstalledSvc() {
-        return installedSvc;
-    }
-
-    public void setInstalledSvc(String installedSvc) {
-        this.installedSvc = installedSvc;
-    }
-
-    public String getBusinessName() {
-        return businessName;
-    }
-
-    public void setBusinessName(String businessName) {
-        this.businessName = businessName;
-    }
-
-    
-    
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
     }
 
     public String getFirstName() {
@@ -128,6 +66,14 @@ public class Customer {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
     }
 
     public Address getAddress() {
@@ -154,6 +100,14 @@ public class Customer {
         this.email = email;
     }
 
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
     public String getSourceDetails() {
         return sourceDetails;
     }
@@ -162,12 +116,12 @@ public class Customer {
         this.sourceDetails = sourceDetails;
     }
 
-    public String getSpecifics() {
-        return specifics;
+    public String getSourceSpecifics() {
+        return sourceSpecifics;
     }
 
-    public void setSpecifics(String specifics) {
-        this.specifics = specifics;
+    public void setSourceSpecifics(String sourceSpecifics) {
+        this.sourceSpecifics = sourceSpecifics;
     }
 
     public String getSourceType() {
@@ -178,19 +132,45 @@ public class Customer {
         this.sourceType = sourceType;
     }
 
-    public ArrayList<String> getAddons() {
-        return addons;
+    public String getIntalledSvc() {
+        return intalledSvc;
     }
 
-    public void setAddons(ArrayList<String> addons) {
-        this.addons = addons;
+    public void setIntalledSvc(String intalledSvc) {
+        this.intalledSvc = intalledSvc;
     }
-    
-    public History getHistory() {
+
+    public int getSurveyDate() {
+        return surveyDate;
+    }
+
+    public void setSurveyDate(int surveyDate) {
+        this.surveyDate = surveyDate;
+    }
+
+    public int getIntallDate() {
+        return intallDate;
+    }
+
+    public void setIntallDate(int intallDate) {
+        this.intallDate = intallDate;
+    }
+
+    public int getHistory() {
         return history;
     }
-    
-    public void setHistory(History history) {
+
+    public void setHistory(int history) {
         this.history = history;
     }
+
+    public String getAddOns() {
+        return addOns;
+    }
+
+    public void setAddOns(String addOns) {
+        this.addOns = addOns;
+    }
+
+    
 }
