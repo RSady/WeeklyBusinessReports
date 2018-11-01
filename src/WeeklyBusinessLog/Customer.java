@@ -13,20 +13,21 @@ import java.util.ArrayList;
  */
 public class Customer {
     
-    int id;
+    int id, incomeDate;
     String firstName, lastName, businessName;
     Address address;
     String phoneNumber, email;
     String accountType, sourceDetails, sourceSpecifics, sourceType;
     String intalledSvc;
-    int surveyDate, intallDate, history;
+    int surveyDate, installDate, history;
     String addOns;
 
     public Customer() {
     }
 
-    public Customer(int id, String firstName, String lastName, String businessName, Address address, String phoneNumber, String email, String accountType, String sourceDetails, String sourceSpecifics, String sourceType, String intalledSvc, int surveyDate, int intallDate, int history, String addOns) {
+    public Customer(int id, int incomeDate, String firstName, String lastName, String businessName, Address address, String phoneNumber, String email, String accountType, String sourceDetails, String sourceSpecifics, String sourceType, String intalledSvc, int surveyDate, int intallDate, int history, String addOns) {
         this.id = id;
+        this.incomeDate = incomeDate;
         this.firstName = firstName;
         this.lastName = lastName;
         this.businessName = businessName;
@@ -39,7 +40,7 @@ public class Customer {
         this.sourceType = sourceType;
         this.intalledSvc = intalledSvc;
         this.surveyDate = surveyDate;
-        this.intallDate = intallDate;
+        this.installDate = intallDate;
         this.history = history;
         this.addOns = addOns;
     }
@@ -50,6 +51,14 @@ public class Customer {
 
     public void setId(int id) {
         this.id = id;
+    }
+    
+    public int getIncomeDate() {
+        return incomeDate;
+    }
+    
+    public void setIncomeDate(int incomeDate) {
+        this.incomeDate = incomeDate;
     }
 
     public String getFirstName() {
@@ -148,12 +157,12 @@ public class Customer {
         this.surveyDate = surveyDate;
     }
 
-    public int getIntallDate() {
-        return intallDate;
+    public int getInstallDate() {
+        return installDate;
     }
 
-    public void setIntallDate(int intallDate) {
-        this.intallDate = intallDate;
+    public void setInstallDate(int installDate) {
+        this.installDate = installDate;
     }
 
     public int getHistory() {
@@ -170,6 +179,11 @@ public class Customer {
 
     public void setAddOns(String addOns) {
         this.addOns = addOns;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", phoneNumber=" + phoneNumber + ", email=" + email + '}';
     }
 
     
