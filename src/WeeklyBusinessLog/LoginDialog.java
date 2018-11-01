@@ -63,6 +63,12 @@ public class LoginDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Password:");
 
+        passwordField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                passwordFieldActionPerformed(evt);
+            }
+        });
+
         signInButton.setText("Sign In");
         signInButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -119,6 +125,17 @@ public class LoginDialog extends javax.swing.JDialog {
         
         
     }//GEN-LAST:event_signInButtonActionPerformed
+
+    private void passwordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordFieldActionPerformed
+        // TODO add your handling code here:
+        String username = "idevapp_" + usernameField.getText();
+        String password = passwordField.getText();
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "A username and password are required.");
+        } else {
+            logIntoDatabase(username, password);
+        }
+    }//GEN-LAST:event_passwordFieldActionPerformed
 
     public static void centerWindow(Window frame) {
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
