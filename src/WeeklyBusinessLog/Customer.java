@@ -20,12 +20,13 @@ public class Customer {
     String accountType, sourceDetails, sourceSpecifics, sourceType;
     String intalledSvc;
     int surveyDate, installDate, history;
-    String addOns;
+    String addOns, metricStatus;
+    
 
     public Customer() {
     }
 
-    public Customer(int id, int incomeDate, String firstName, String lastName, String businessName, Address address, String phoneNumber, String email, String accountType, String sourceDetails, String sourceSpecifics, String sourceType, String intalledSvc, int surveyDate, int intallDate, int history, String addOns) {
+    public Customer(int id, int incomeDate, String firstName, String lastName, String businessName, Address address, String phoneNumber, String email, String accountType, String sourceDetails, String sourceSpecifics, String sourceType, String intalledSvc, int surveyDate, int intallDate, int history, String addOns, String metricStatus) {
         this.id = id;
         this.incomeDate = incomeDate;
         this.firstName = firstName;
@@ -43,6 +44,7 @@ public class Customer {
         this.installDate = intallDate;
         this.history = history;
         this.addOns = addOns;
+        this.metricStatus = metricStatus;
     }
 
     public int getId() {
@@ -179,6 +181,14 @@ public class Customer {
 
     public void setAddOns(String addOns) {
         this.addOns = addOns;
+    }
+    
+    public String getMetricStatus() {
+        return metricStatus;
+    }
+    
+    public void setMetricStatus(String status) {
+        this.metricStatus = status;
     }
 
     @Override
