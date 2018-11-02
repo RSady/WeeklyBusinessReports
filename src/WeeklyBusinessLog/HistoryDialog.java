@@ -32,9 +32,7 @@ public class HistoryDialog extends javax.swing.JDialog {
     }
     
     public void setHistoryData(Customer customer) {
-        String historyData = customer.getHistory().getUser() + " " + customer.getHistory().getDate() + " " + customer.getHistory().getDescription();
-        textArea.setText(historyData);
-        System.out.println("Set History Data");
+        
     }
 
     /**
