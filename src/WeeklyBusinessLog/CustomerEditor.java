@@ -8,6 +8,9 @@ package WeeklyBusinessLog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,9 +24,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 import javax.swing.text.MaskFormatter;
-import javax.swing.text.html.ListView;
+
 
 /**
  *
@@ -38,6 +40,7 @@ public class CustomerEditor extends javax.swing.JDialog {
     public Customer currentCustomer = new Customer();
     private ButtonGroup accountTypeGroup = new ButtonGroup();
     private Customer selectedCustomer;
+    private Connection connection;
     
     /**
      * Creates new form CustomerEditor
@@ -68,15 +71,15 @@ public class CustomerEditor extends javax.swing.JDialog {
         frame.setLocation(x, y);
     }
     
-    private void setCustomerData(Customer customer) {
-        //customer.setAddons(result);
-        result.forEach((item) -> {
-            System.out.println(item);
-        });
+    private void uploadNewCustomerToDatabase(Customer customer) {
         
-        if (editingCustomer && selectedCustomer != null) {
-            setFieldsForCustomer(selectedCustomer);
+        try {
+            connection = DriverManager.getConnection(DatabaseCredentials.databaseUrl, username, password);
+        } catch (SQLException ex) {
+            
         }
+        
+        
 
     }
     
