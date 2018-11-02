@@ -8,13 +8,22 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.time.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.*;
 import javax.swing.text.MaskFormatter;
@@ -26,6 +35,7 @@ import javax.swing.text.MaskFormatter;
 public class MainFrame extends javax.swing.JFrame {
 
     private Customer selectedCustomer;
+    private JFrame frame = new JFrame();
     private static String username, password;
     private static Connection connection = null;
     private static ArrayList<Customer> customerList = new ArrayList();
@@ -88,11 +98,12 @@ public class MainFrame extends javax.swing.JFrame {
                 customer.setSourceSpecifics(results.getString("source_specifics"));
                 customer.setSourceType(results.getString("source_type"));
                 customer.setIntalledSvc(results.getString("installed_service"));
+                customer.setIncomeDate(results.getInt("income_date"));
                 customer.setSurveyDate(results.getInt("survey_date"));
                 customer.setInstallDate(results.getInt("install_date"));
                 customer.setHistory(results.getInt("history"));
                 customer.setAddOns(results.getString("add_ons"));
-                
+                customer.setMetricStatus(results.getString("metric_status"));
                 System.out.println(customer.toString());
                 customerList.add(customer);
             }
@@ -117,13 +128,13 @@ public class MainFrame extends javax.swing.JFrame {
              String phoneMask = "(###) ###-####";
              MaskFormatter maskFormatter = new MaskFormatter(phoneMask);
              maskFormatter.setValueContainsLiteralCharacters(false);
-             Date incomeDate = new Date(customerList.get(i).getIncomeDate());
+             Date incomeDate = Date.from(Instant.ofEpochSecond((long) customerList.get(i).getIncomeDate()));
              String accountType = customerList.get(i).getAccountType();
              Object[] data = {name, address, maskFormatter.valueToString(phone), formatDate(incomeDate), accountType};
              tableModel.addRow(data);
-             //tableView.setRowSelectionInterval(selectedIndex, selectedIndex);
+             //jTable.setRowSelectionInterval(selectedIndex, selectedIndex);
          }
-         //resizeColumnWidth(jTable);
+         
          
          jTable.setModel(tableModel); 
         } catch (SQLException e) {
@@ -194,6 +205,11 @@ public class MainFrame extends javax.swing.JFrame {
                 "First Name", "Last Name", "Address", "Incoming Date"
             }
         ));
+        jTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable);
 
         addNewButton.setText("Add New");
@@ -206,6 +222,11 @@ public class MainFrame extends javax.swing.JFrame {
         removeButton.setText("Remove");
 
         refreshButton.setText("Refresh");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
 
         editButton.setText("Edit");
         editButton.addActionListener(new java.awt.event.ActionListener() {
@@ -298,7 +319,30 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         // TODO add your handling code here:
+        if (selectedCustomer != null) {
+            CustomerEditor customerEditor = new CustomerEditor(frame, true);
+            customerEditor.setCustomer(selectedCustomer);
+            customerEditor.setFieldsForCustomer(selectedCustomer);
+            customerEditor.setVisible(true);
+            customerEditor.setAlwaysOnTop(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a customer.");
+        }
     }//GEN-LAST:event_editButtonActionPerformed
+
+    private void jTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseClicked
+        // TODO add your handling code here:
+        JTable target = (JTable)evt.getSource();
+        int selectedRow = target.getSelectedRow();
+        selectedCustomer = customerList.get(selectedRow);
+        
+    }//GEN-LAST:event_jTableMouseClicked
+
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+        // TODO add your handling code here:
+        customerList.clear();
+        connectToDatabase();
+    }//GEN-LAST:event_refreshButtonActionPerformed
 
     /**
      * @param args the command line arguments
