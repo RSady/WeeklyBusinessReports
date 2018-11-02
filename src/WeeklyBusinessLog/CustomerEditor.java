@@ -8,12 +8,21 @@ package WeeklyBusinessLog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
+import javax.swing.text.MaskFormatter;
 import javax.swing.text.html.ListView;
 
 /**
@@ -28,6 +37,7 @@ public class CustomerEditor extends javax.swing.JDialog {
     public ArrayList<String> result = new ArrayList();
     public Customer currentCustomer = new Customer();
     private ButtonGroup accountTypeGroup = new ButtonGroup();
+    private Customer selectedCustomer;
     
     /**
      * Creates new form CustomerEditor
@@ -40,6 +50,15 @@ public class CustomerEditor extends javax.swing.JDialog {
         accountTypeGroup.add(residentialRadioButton);
         accountTypeGroup.add(businessRadioButton);
         centerWindow(this);
+        
+        if (editingCustomer && selectedCustomer != null) {
+            setFieldsForCustomer(selectedCustomer);
+        }
+    }
+    
+    public void setCustomer(Customer customer) {
+        selectedCustomer = customer;
+        editingCustomer = true;
     }
     
     public static void centerWindow(Window frame) {
@@ -55,45 +74,88 @@ public class CustomerEditor extends javax.swing.JDialog {
             System.out.println(item);
         });
         
-        if (editingCustomer) {
-            
-        } else {
-            /*
-            this.id = id;
-        this.incomeDate = incomeDate;
-        this.surveyDate = surveyDate;
-        this.installDate = installDate;
-        this.source = source;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.sourceDetails = sourceDetails;
-        this.specifics = specifics;
-        this.sourceType = sourceType;
-        this.status = status;
-        this.installedSvc = installedSvc;
-        this.businessName = businessName;
-        this.addons = addons;
-        this.history = history;
-            */
-            
-            int incomeDate = (int) System.currentTimeMillis();
-            String firstName = firstNameField.getText();
-            String lastName = lastNameField.getText();
-            String accountType = accountTypeGroup.getSelection().getActionCommand();
-            String phoneNumber = phoneField.getText();
-            String emailAddress = emailField.getText();
-            Address address = new Address(streetField.getText(), unitField.getText(), cityField.getText(), stateField.getText(), zipField.getText());
-            String source = sourceComboBox.getSelectedItem().toString();
-            String specifics = specificsTextArea.getText();
-            String sourceDetail = detailComboBox.getSelectedItem().toString();
-            String addons = String.join(",", result);
-            
-            //Customer cst = new Customer(0, firstName, lastName);
+        if (editingCustomer && selectedCustomer != null) {
+            setFieldsForCustomer(selectedCustomer);
         }
 
+    }
+    
+    public void setFieldsForCustomer(Customer customer) {
+        firstNameField.setText(customer.getFirstName());
+        lastNameField.setText(customer.getLastName());
+        streetField.setText(customer.getAddress().getStreet());
+        unitField.setText(customer.getAddress().getUnit());
+        cityField.setText(customer.getAddress().getCity());
+        stateField.setText(customer.getAddress().getState());
+        zipField.setText(customer.getAddress().getZip());
+        emailField.setText(customer.getEmail());
+        if (customer.getBusinessName() != null) {
+            businessNameField.setText(customer.getBusinessName());
+        }
+
+        //Phone
+        if (customer.getPhoneNumber().length() != 0) {
+            try {
+                String phoneMask = "(###) ###-####";
+                MaskFormatter maskFormatter = new MaskFormatter(phoneMask);
+                maskFormatter.setValueContainsLiteralCharacters(false);
+                phoneField.setText(maskFormatter.valueToString(customer.getPhoneNumber()));
+            } catch (ParseException ex) {
+                System.out.println(ex);
+            }
+        }
+
+        //Account Info
+        sourceComboBox.setSelectedItem(customer.getSourceType());
+        detailComboBox.setSelectedItem(customer.getSourceDetails());
+        specificsTextArea.setText(customer.getSourceSpecifics());
+        if (customer.getAccountType() != null) {
+            if (customer.getAccountType().equalsIgnoreCase("residential")) {
+                residentialRadioButton.setSelected(true);
+            } else {
+                businessRadioButton.setSelected(true);
+            }
+        }
+        
+        //Metrics
+        setMetrics(customer);
+        setAddOns(customer);
+    }
+    
+    private void setMetrics(Customer customer) {
+        installedSvcComboBox.setSelectedItem(customer.getIntalledSvc());
+        statusComboBox.setSelectedItem(customer.getMetricStatus());
+        //Set Income Date Fields
+        if (customer.getIncomeDate() != 0) {
+            Date incomeDate = Date.from(Instant.ofEpochSecond((long) customer.getIncomeDate()));
+            setDateFields(incomeMonthComboBox, incomeDayComboBox, incomeYearComboBox, incomeDate);            
+        }
+        
+        if (customer.getInstallDate() != 0) {
+            Date date = Date.from(Instant.ofEpochSecond((long) customer.getInstallDate()));
+            setDateFields(installMonthComboBox, installDayComboBox, installYearComboBox, date);            
+        }
+        
+        if (customer.getSurveyDate() != 0) {
+            Date date = Date.from(Instant.ofEpochSecond((long) customer.getSurveyDate()));
+            setDateFields(surveyMonthComboBox, surveyDayComboBox, surveyYearComboBox, date);            
+        }
+    }
+    
+    private void setAddOns(Customer customer) {
+        List<String> addonList =  Arrays.asList(customer.getAddOns().split(","));
+        ArrayList<String> addons = new ArrayList<>(addonList);
+        populateAddOns(addons);
+    }
+    
+    private void setDateFields(JComboBox monthBox, JComboBox dayBox, JComboBox yearBox, Date date) {
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int month = localDate.getMonthValue();
+        int day = localDate.getDayOfMonth();
+        int year = localDate.getYear();
+        monthBox.setSelectedIndex(month);
+        dayBox.setSelectedIndex(day);
+        yearBox.setSelectedItem(String.valueOf(year));
     }
     
     private void populateAddOns(ArrayList<String> list) {
@@ -556,7 +618,7 @@ public class CustomerEditor extends javax.swing.JDialog {
                 .addGap(0, 13, Short.MAX_VALUE))
         );
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Account"));
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Source"));
 
         jLabel18.setText("Specifics:");
 
@@ -666,7 +728,8 @@ public class CustomerEditor extends javax.swing.JDialog {
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         // TODO add your handling code here:
-        setCustomerData(currentCustomer);
+        //setCustomerData(currentCustomer);
+        System.out.println(selectedCustomer.toString());
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
