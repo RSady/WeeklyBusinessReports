@@ -314,7 +314,8 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void addNewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNewButtonActionPerformed
         // TODO add your handling code here:
-        CustomerEditor.main(null);
+        String[] credentials = {username, password};
+        CustomerEditor.main(credentials);
     }//GEN-LAST:event_addNewButtonActionPerformed
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
@@ -325,6 +326,7 @@ public class MainFrame extends javax.swing.JFrame {
             customerEditor.setFieldsForCustomer(selectedCustomer);
             customerEditor.setVisible(true);
             customerEditor.setAlwaysOnTop(true);
+            customerEditor.setUserCredentials(username, password);
         } else {
             JOptionPane.showMessageDialog(null, "Please select a customer.");
         }
