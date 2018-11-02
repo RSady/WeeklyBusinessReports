@@ -10,7 +10,7 @@ package WeeklyBusinessLog;
  * @author Sady
  */
 public class Address {
-    String street, unit, city, state, zip;
+    private String street, unit, city, state, zip;
 
     public Address(String street, String unit, String city, String state, String zip) {
         this.street = street;
