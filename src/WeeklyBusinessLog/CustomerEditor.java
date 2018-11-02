@@ -10,7 +10,9 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -41,6 +43,7 @@ public class CustomerEditor extends javax.swing.JDialog {
     private ButtonGroup accountTypeGroup = new ButtonGroup();
     private Customer selectedCustomer;
     private Connection connection;
+    private static String username, password;
     
     /**
      * Creates new form CustomerEditor
@@ -71,12 +74,19 @@ public class CustomerEditor extends javax.swing.JDialog {
         frame.setLocation(x, y);
     }
     
-    private void uploadNewCustomerToDatabase(Customer customer) {
-        
+    private void uploadNewCustomerToDatabase(Customer customer) { 
         try {
             connection = DriverManager.getConnection(DatabaseCredentials.databaseUrl, username, password);
+
+            
         } catch (SQLException ex) {
             
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                
+            }
         }
         
         
@@ -167,6 +177,11 @@ public class CustomerEditor extends javax.swing.JDialog {
            listModel.addElement(item);
         });
         addOnListView.setModel(listModel);
+    }
+    
+    public void setUserCredentials(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     /**
@@ -733,6 +748,14 @@ public class CustomerEditor extends javax.swing.JDialog {
         // TODO add your handling code here:
         //setCustomerData(currentCustomer);
         System.out.println(selectedCustomer.toString());
+        
+        if (selectedCustomer != null && editingCustomer) {
+            //Update Selected Customer
+            
+        } else if (!editingCustomer) {
+            //Create New Customer
+        }
+        
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
@@ -757,8 +780,8 @@ public class CustomerEditor extends javax.swing.JDialog {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
+    public static void main(String args[]) {       
+        /* Set the Nimbus look and feel */       
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -784,6 +807,8 @@ public class CustomerEditor extends javax.swing.JDialog {
         /* Create and display the addOnDialog */
         java.awt.EventQueue.invokeLater(() -> {
             CustomerEditor dialog = new CustomerEditor(new javax.swing.JFrame(), true);
+            username = args[0];
+            password = args[1];
             dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosing(java.awt.event.WindowEvent e) {
@@ -791,7 +816,7 @@ public class CustomerEditor extends javax.swing.JDialog {
                 }
             });
             dialog.setVisible(true);
-            
+                 
         });
     }
 
