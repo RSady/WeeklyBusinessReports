@@ -13,7 +13,8 @@ import java.util.ArrayList;
  */
 public class Customer {
     
-    int id, incomeDate;
+    int id;
+    int incomeDate;
     String firstName, lastName, businessName;
     Address address;
     String phoneNumber, email;
@@ -193,8 +194,10 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Customer{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", phoneNumber=" + phoneNumber + ", email=" + email + '}';
+        return "Customer{" + "id=" + id + ", incomeDate=" + incomeDate + ", firstName=" + firstName + ", lastName=" + lastName + ", surveyDate=" + surveyDate + ", installDate=" + installDate + '}';
     }
+
+    
 
     
 }
