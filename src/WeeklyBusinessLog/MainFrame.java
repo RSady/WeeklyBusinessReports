@@ -52,6 +52,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
+        this.setTitle("Massivemesh Weekly Business Log");
         centerWindow(this);
         
         connectToDatabase();
@@ -118,7 +119,7 @@ public class MainFrame extends javax.swing.JFrame {
              String state = customerList.get(i).getAddress().getState();
              String zip = customerList.get(i).getAddress().getZip();
              String address;
-             if (unit == null) {
+             if (unit == null || unit.isEmpty()) {
                  address = street + ", " + city + " " + state + ", " + zip;
              } else {
                  address = street + " " + unit + ", " + city + " " + state + ", " + zip;
