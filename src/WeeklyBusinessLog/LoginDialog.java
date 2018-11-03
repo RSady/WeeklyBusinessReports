@@ -24,6 +24,7 @@ public class LoginDialog extends javax.swing.JDialog {
     public LoginDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.setTitle("Massivemesh Weekly Business Log");
         centerWindow(this);
     }
 
@@ -63,11 +64,14 @@ public class LoginDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Password:");
 
+        passwordField.setText("Dakota27!");
         passwordField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 passwordFieldActionPerformed(evt);
             }
         });
+
+        usernameField.setText("admin");
 
         signInButton.setText("Sign In");
         signInButton.addActionListener(new java.awt.event.ActionListener() {
