@@ -10,6 +10,7 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -64,6 +65,23 @@ public class MainFrame extends javax.swing.JFrame {
             populateCustomerList(conn);
         } catch (SQLException e) {
             System.out.println(e);
+        }
+    }
+    
+    private void deleteCustomer(Customer customer, Connection connection) {
+        try {
+            connection = DriverManager.getConnection(DatabaseCredentials.databaseUrl, username, password);
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM Customers WHERE id = ?");
+            statement.setInt(1, customer.getId());
+            statement.execute();
+        } catch (SQLException e) {
+            
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                
+            }
         }
     }
     
@@ -220,7 +238,12 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        removeButton.setText("Remove");
+        removeButton.setText("Delete");
+        removeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeButtonActionPerformed(evt);
+            }
+        });
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -323,11 +346,11 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (selectedCustomer != null) {
             CustomerEditor customerEditor = new CustomerEditor(frame, true);
+            customerEditor.setUserCredentials(username, password);
             customerEditor.setCustomer(selectedCustomer);
             customerEditor.setFieldsForCustomer(selectedCustomer);
             customerEditor.setVisible(true);
             customerEditor.setAlwaysOnTop(true);
-            customerEditor.setUserCredentials(username, password);
         } else {
             JOptionPane.showMessageDialog(null, "Please select a customer.");
         }
@@ -346,6 +369,20 @@ public class MainFrame extends javax.swing.JFrame {
         customerList.clear();
         connectToDatabase();
     }//GEN-LAST:event_refreshButtonActionPerformed
+
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+        // TODO add your handling code here:
+        if (selectedCustomer != null && connection != null) {
+            int action = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected record?", "Delete Record?", JOptionPane.OK_CANCEL_OPTION);
+            if (action == JOptionPane.OK_OPTION) {
+                deleteCustomer(selectedCustomer, connection);
+                customerList.clear();
+                connectToDatabase();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a record to delete.");
+        }
+    }//GEN-LAST:event_removeButtonActionPerformed
 
     /**
      * @param args the command line arguments
