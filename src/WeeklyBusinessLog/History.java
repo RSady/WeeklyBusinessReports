@@ -12,15 +12,34 @@ package WeeklyBusinessLog;
  */
 public class History {
     
+    int id, customer;
     String date, description, user;
-
+    
     public History() {
     }
 
-    public History(String date, String description, String user) {
+    public History(int id, int customer, String date, String description, String user) {
+        this.id = id;
+        this.customer = customer;
         this.date = date;
         this.description = description;
         this.user = user;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(int customer) {
+        this.customer = customer;
     }
 
     public String getDate() {
@@ -47,10 +66,7 @@ public class History {
         this.user = user;
     }
 
-    @Override
-    public String toString() {
-        return "History{" + "date=" + date + ", description=" + description + ", user=" + user + '}';
-    }
+    
     
     
     
