@@ -58,7 +58,7 @@ public class InstallAddOnsDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         listView.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Static IP", "Access Point", " " };
+            String[] strings = { "Static IP", "Access Point", "Camera", "DTV Now", "Bulk OTA", "Bulk Internet" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
