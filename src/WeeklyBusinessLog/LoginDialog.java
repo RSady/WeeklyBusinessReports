@@ -64,14 +64,11 @@ public class LoginDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Password:");
 
-        passwordField.setText("Dakota27!");
         passwordField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 passwordFieldActionPerformed(evt);
             }
         });
-
-        usernameField.setText("admin");
 
         signInButton.setText("Sign In");
         signInButton.addActionListener(new java.awt.event.ActionListener() {
