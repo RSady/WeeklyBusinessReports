@@ -36,7 +36,12 @@ public class LoginDialog extends javax.swing.JDialog {
             MainFrame.main(credentials);
         } catch (SQLException e) {
             System.out.println("Cannot connect to database:" + e);
-            JOptionPane.showMessageDialog(null, "Unable to connect to the database. \n" + e);
+            
+            if (e.getLocalizedMessage().contains("Access denied")) {
+                JOptionPane.showMessageDialog(this, "Invalid username and/or password.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Unable to connect to the database." + System.lineSeparator() + e);
+            }
         }
         
     }
@@ -119,7 +124,7 @@ public class LoginDialog extends javax.swing.JDialog {
         String username = "idevapp_" + usernameField.getText();
         String password = passwordField.getText();
         if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "A username and password are required.");
+            JOptionPane.showMessageDialog(this, "A usernanullme and password are required.");
         } else {
             logIntoDatabase(username, password);
         }
@@ -132,7 +137,7 @@ public class LoginDialog extends javax.swing.JDialog {
         String username = "idevapp_" + usernameField.getText();
         String password = passwordField.getText();
         if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "A username and password are required.");
+            JOptionPane.showMessageDialog(this, "A username and password are required.");
         } else {
             logIntoDatabase(username, password);
         }
