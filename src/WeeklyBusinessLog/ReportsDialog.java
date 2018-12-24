@@ -5,6 +5,10 @@
  */
 package WeeklyBusinessLog;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,6 +23,7 @@ public class ReportsDialog extends javax.swing.JDialog {
     public ReportsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        centerWindow(this);
     }
 
     /**
@@ -150,10 +155,19 @@ public class ReportsDialog extends javax.swing.JDialog {
 
     private void resultsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resultsButtonActionPerformed
         // TODO add your handling code here:
-        if (datesAreValid()) {
-            
+        int startDay = startDayComboBox.getSelectedIndex();
+        int startMonth = startMonthComboBox.getSelectedIndex();
+        int startYear = startYearComboBox.getSelectedIndex();
+        int endDay = endDayComboBox.getSelectedIndex();
+        int endMonth = endMonthComboBox.getSelectedIndex();
+        int endYear = endYearComboBox.getSelectedIndex();
+        if (startDay == 0 || startMonth == 0 || startYear == 0) {
+          JOptionPane.showMessageDialog(this, "Please select a start date.");
+        } else if (endDay == 0 || endMonth == 0 || endYear == 0) {
+          JOptionPane.showMessageDialog(this, "Please select an end date.");  
         } else {
-            JOptionPane.showMessageDialog(this, "Please select valid start and end dates.");
+            //Dates are selected...run report
+            
         }
     }//GEN-LAST:event_resultsButtonActionPerformed
 
@@ -201,9 +215,29 @@ public class ReportsDialog extends javax.swing.JDialog {
     
     private boolean datesAreValid() {
         
+        String startDay = startDayComboBox.getActionCommand();
+        String startMonth = startMonthComboBox.getActionCommand();
+        String startYear = startYearComboBox.getActionCommand();
+        String endDay = endDayComboBox.getActionCommand();
+        String endMonth = endMonthComboBox.getActionCommand();
+        String endYear = endYearComboBox.getActionCommand();
         
-        
-        return false;
+        if (startDay.isEmpty() || startMonth.isEmpty() || startYear.isEmpty()) {
+          JOptionPane.showMessageDialog(this, "Please select a start date.");
+          return false;  
+        } else if (endDay.isEmpty() || endMonth.isEmpty() || endYear.isEmpty()) {
+          JOptionPane.showMessageDialog(this, "Please select an end date.");  
+          return false;
+        }
+    
+        return true;
+    }
+    
+    public static void centerWindow(Window frame) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+        frame.setLocation(x, y);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
