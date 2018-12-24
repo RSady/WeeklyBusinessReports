@@ -705,7 +705,12 @@ public class CustomerEditor extends javax.swing.JDialog {
 
         jLabel15.setText("Installed Service:");
 
-        installedSvcComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Home Standard", "Premium HD", "Turbo 25", "Ultimate 50", "Business Basic", "Business Enhanced", "Business Pro", "News 20", "Powers Park 50", "Powers Park 100", "MDU Prewire" }));
+        installedSvcComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " ", "Home Standard", "Premium HD", "Turbo 25", "Ultimate 50", "Business Basic", "Business Enhanced", "Business Pro", "News 20", "Powers Park 50", "Powers Park 100", "MDU Prewire" }));
+        installedSvcComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                installedSvcComboBoxActionPerformed(evt);
+            }
+        });
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Installed Add-Ons"));
 
@@ -1067,6 +1072,10 @@ public class CustomerEditor extends javax.swing.JDialog {
         saveCustomerAction();
         clearTextFields(this.getContentPane());
     }//GEN-LAST:event_saveClearButtonActionPerformed
+
+    private void installedSvcComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_installedSvcComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_installedSvcComboBoxActionPerformed
 
     /**
      * @param args the command line arguments
