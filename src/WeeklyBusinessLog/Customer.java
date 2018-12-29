@@ -6,6 +6,8 @@
 package WeeklyBusinessLog;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.function.Consumer;
 
 /**
  *
@@ -196,6 +198,7 @@ public class Customer {
     public String toString() {
         return "Customer{" + "id=" + id + ", incomeDate=" + incomeDate + ", firstName=" + firstName + ", lastName=" + lastName + ", surveyDate=" + surveyDate + ", installDate=" + installDate + '}';
     }
+
 
     
 
