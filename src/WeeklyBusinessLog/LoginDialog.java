@@ -5,15 +5,11 @@
  */
 package WeeklyBusinessLog;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.image.BufferedImage;
 import java.sql.*;
 import javax.swing.JOptionPane;
-import java.io.*;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+
 /**
  *
  * @author Szady
