@@ -369,10 +369,8 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void reportsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportsButtonActionPerformed
         // TODO add your handling code here:
-        ReportsDialog reportsDialog = new ReportsDialog(frame, true);
-        reportsDialog.setVisible(true);
-        reportsDialog.setAlwaysOnTop(true);
-
+        String[] credentials = {username, password};
+        ReportsDialog.main(credentials);
     }//GEN-LAST:event_reportsButtonActionPerformed
 
     /**
