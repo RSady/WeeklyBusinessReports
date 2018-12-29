@@ -8,6 +8,14 @@ package WeeklyBusinessLog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
@@ -20,6 +28,10 @@ public class ReportsDialog extends javax.swing.JDialog {
     /**
      * Creates new form ReportsDialog
      */
+    private Connection connection;
+    private static String username, password;
+    private ArrayList<Customer> customerList = new ArrayList<>();
+    
     public ReportsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -45,6 +57,8 @@ public class ReportsDialog extends javax.swing.JDialog {
         endYearComboBox = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        resultsTextArea = new javax.swing.JTextArea();
         resultsButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -73,15 +87,25 @@ public class ReportsDialog extends javax.swing.JDialog {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Results"));
 
+        resultsTextArea.setColumns(20);
+        resultsTextArea.setRows(5);
+        jScrollPane1.setViewportView(resultsTextArea);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         resultsButton.setText("Run");
@@ -157,20 +181,110 @@ public class ReportsDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
         int startDay = startDayComboBox.getSelectedIndex();
         int startMonth = startMonthComboBox.getSelectedIndex();
-        int startYear = startYearComboBox.getSelectedIndex();
+        int startYear, endYear; 
         int endDay = endDayComboBox.getSelectedIndex();
         int endMonth = endMonthComboBox.getSelectedIndex();
-        int endYear = endYearComboBox.getSelectedIndex();
-        if (startDay == 0 || startMonth == 0 || startYear == 0) {
+        if (startDay == 0 || startMonth == 0 || startYearComboBox.getSelectedItem().toString().isEmpty()) {
           JOptionPane.showMessageDialog(this, "Please select a start date.");
-        } else if (endDay == 0 || endMonth == 0 || endYear == 0) {
+        } else if (endDay == 0 || endMonth == 0 || endYearComboBox.getSelectedIndex() == 0) {
           JOptionPane.showMessageDialog(this, "Please select an end date.");  
         } else {
+            startYear = Integer.parseInt(startYearComboBox.getSelectedItem().toString());
+            endYear = Integer.parseInt(endYearComboBox.getSelectedItem().toString());
+            ZoneId zoneId = ZoneId.systemDefault();
+            LocalDate startDt = LocalDate.of(startYear, startMonth, startDay);
+            LocalDate endDt = LocalDate.of(endYear, endMonth, endDay);
+            int startDate = (int) startDt.atStartOfDay(zoneId).toEpochSecond();
+            int endDate = (int) endDt.atStartOfDay(zoneId).toEpochSecond();
+
+            //Check if Start date is before End date
+            if (startDate > endDate) {
+                JOptionPane.showMessageDialog(this, "The start date must be before the end date.");  
+                return;
+            }
             //Dates are selected...run report
-            
+            getResultsFromDatabase(startDate, endDate);
         }
     }//GEN-LAST:event_resultsButtonActionPerformed
 
+    private void getResultsFromDatabase(int startDate, int endDate) {
+        //SELECT * from CUSTOMERS where DATE BETWEEN __ and __;
+        
+        try (Connection conn = DriverManager.getConnection(DatabaseCredentials.databaseUrl, username, password)) {
+            connection = conn;
+            String query = "SELECT * FROM Customers WHERE income_date BETWEEN " + startDate + " AND " + endDate;
+            Statement statement = connection.createStatement();
+            ResultSet results = statement.executeQuery(query);
+            System.out.println("Results: " + results);
+            while (results.next()) {
+                Customer newCustomer = parseCustomerFromResults(results);
+                customerList.add(newCustomer);
+            }
+            displayResults(customerList);
+        } catch (SQLException e) {
+            System.out.println("Populate Customers Error: " + e);
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                System.out.println(ex);
+            } 
+        }
+    }
+    
+    private Customer parseCustomerFromResults(ResultSet results) {
+        try {
+            Address address = new Address(results.getString("street"),
+                    results.getString("unit"),
+                    results.getString("city"),
+                    results.getString("state"),
+                    results.getString("zip"));
+            Customer customer = new Customer();
+            customer.setId(results.getInt("id"));
+            customer.setFirstName(results.getString("first_name"));
+            customer.setLastName(results.getString("last_name"));
+            customer.setBusinessName(results.getString("business_name"));
+            customer.setAddress(address);
+            customer.setPhoneNumber(results.getString("phone"));
+            customer.setEmail(results.getString("email"));
+            customer.setAccountType(results.getString("account_type"));
+            customer.setSourceDetails(results.getString("source_details"));
+            customer.setSourceSpecifics(results.getString("source_specifics"));
+            customer.setSourceType(results.getString("source_type"));
+            customer.setIntalledSvc(results.getString("installed_service"));
+            customer.setIncomeDate(results.getInt("income_date"));
+            customer.setSurveyDate(results.getInt("survey_date"));
+            customer.setInstallDate(results.getInt("install_date"));
+            customer.setHistory(results.getInt("history"));
+            customer.setAddOns(results.getString("add_ons"));
+            customer.setMetricStatus(results.getString("metric_status"));
+            return customer;
+        } catch (SQLException e) {
+            System.out.println("Parsing Customer Error: " + e);
+        }
+        return null;
+    }
+    
+    private void displayResults(ArrayList<Customer> customers) {
+        int installedCustomers = 0;
+        int surveyedCustomers = 0;
+        
+        
+        for (Customer customer: customers) {
+            if (customer.installDate != 0) {
+                installedCustomers += 1;
+            }
+            
+            if (customer.surveyDate != 0) {
+                surveyedCustomers += 1;
+            }
+            
+        }
+        
+        resultsTextArea.setText("Installed Customers: " + installedCustomers + System.lineSeparator() + "Surveyed Customers: " + surveyedCustomers);
+    }
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -198,6 +312,9 @@ public class ReportsDialog extends javax.swing.JDialog {
         }
         //</editor-fold>
 
+        username = args[0];
+        password = args[1];
+        
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -205,32 +322,12 @@ public class ReportsDialog extends javax.swing.JDialog {
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
+                        
                     }
                 });
                 dialog.setVisible(true);
             }
         });
-    }
-    
-    private boolean datesAreValid() {
-        
-        String startDay = startDayComboBox.getActionCommand();
-        String startMonth = startMonthComboBox.getActionCommand();
-        String startYear = startYearComboBox.getActionCommand();
-        String endDay = endDayComboBox.getActionCommand();
-        String endMonth = endMonthComboBox.getActionCommand();
-        String endYear = endYearComboBox.getActionCommand();
-        
-        if (startDay.isEmpty() || startMonth.isEmpty() || startYear.isEmpty()) {
-          JOptionPane.showMessageDialog(this, "Please select a start date.");
-          return false;  
-        } else if (endDay.isEmpty() || endMonth.isEmpty() || endYear.isEmpty()) {
-          JOptionPane.showMessageDialog(this, "Please select an end date.");  
-          return false;
-        }
-    
-        return true;
     }
     
     public static void centerWindow(Window frame) {
@@ -248,7 +345,9 @@ public class ReportsDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton resultsButton;
+    private javax.swing.JTextArea resultsTextArea;
     private javax.swing.JComboBox<String> startDayComboBox;
     private javax.swing.JComboBox<String> startMonthComboBox;
     private javax.swing.JComboBox<String> startYearComboBox;
